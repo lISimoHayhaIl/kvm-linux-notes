@@ -1,0 +1,41 @@
+#!/bin/bash
+#/etc/libvirt/hooks/qemu
+#Need to be executable to run
+
+HCPUS=8-15,24-31
+MCPUS=0-7,16-23
+ACPUS=0-31
+
+disable_isolation () {
+			systemctl set-property --runtime -- user.slice AllowedCPUs=$ACPUS
+			systemctl set-property --runtime -- system.slice AllowedCPUs=$ACPUS
+			systemctl set-property --runtime -- init.scope AllowedCPUs=$ACPUS
+
+        	taskset -pc $ACPUS 2  # kthreadd reset
+}
+
+enable_isolation () {
+			systemctl set-property --runtime -- user.slice AllowedCPUs=$HCPUS 
+			systemctl set-property --runtime -- system.slice AllowedCPUs=$HCPUS
+			systemctl set-property --runtime -- init.scope AllowedCPUs=$HCPUS
+
+            irq-affinity mask $MCPUS
+
+	        taskset -pc $MCPUS 2  # kthreadd only on host cores
+}
+
+case "$2" in
+"prepare")
+        enable_isolation
+        echo "prepared" >> /home/username/qemu_hook.log
+        ;;
+"started")
+        echo "started" >> /home/username/qemu_hook.log
+        ;;
+"release")
+        disable_isolation
+        echo "released" >> /home/username/qemu_hook.log
+        ;;
+esac
+
+
