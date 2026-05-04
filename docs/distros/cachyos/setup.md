@@ -9,7 +9,7 @@
 
 2. Change boot kernel parameters. Sometimes limine.conf might be in another folder, search for it
     sudo nano /etc/default/limine
-KERNEL_CMDLINE[default]+="quiet nowatchdog splash rw rootflags=subvol=/@ root=UUID=b33b1f0a-d49f-4eef-87f8-25f774aa65c5 nvidia_drm.modeset=1 rd.driver.blacklist=nouveau modprobe.blacklist=nouveau video=efifb:off rd.driver.pre=vfio-pci kvm.ignore_msrs=1 vfio-pci.ids=10de:2704,10de:22bb,14e4:1677 amd_iommu=force_enable iommu=pt hugepages=16384"
+KERNEL_CMDLINE[default]+="quiet nowatchdog splash rw rootflags=subvol=/@ root=UUID=b33b1f0a-d49f-4eef-87f8-25f774aa65c5 nvidia_drm.modeset=1 rd.driver.blacklist=nouveau modprobe.blacklist=nouveau video=efifb:off rd.driver.pre=vfio-pci kvm.ignore_msrs=1 vfio-pci.ids=10de:2704,10de:22bb,14e4:1677,1462:3fa4 amd_iommu=force_enable iommu=pt hugepages=16384"
 
 3. Reboot
     CachyOS with Limine, is not using GRUB, and reads the config on the fly, so no need to rebuild before reboot
@@ -26,7 +26,7 @@ then add your user to that group
 
 6. Add your PCI IDs that you want the system to ignore during boot in modprobe configuration. You can add any device here, not only your VGA
     sudo nano /etc/modprobe.d/vfio.conf
-	options vfio-pci ids=10de:2704,10de:22bb,14e4:1677
+	options vfio-pci ids=10de:2704,10de:22bb,14e4:1677,1462:3fa4
 
 7. Also, make sure the correct modules and hooks are loaded during boot. Might be already there, just verify existence and order
     sudo nano /etc/mkinitcpio.conf
