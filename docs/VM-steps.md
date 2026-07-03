@@ -25,3 +25,11 @@
 13. Start your VM and begin the installation
 
 *do not add a NIC yet, to avoid Windows creating an online account
+
+14. To optimize performance, you need to isolate CPU cores in OS level. In order to do that you need to
+    a. sudo mkdir /etc/libvirt/hooks
+    b. sudo nano /etc/libvirt/hooks/qemu (and paste script from backup)
+    c. sudo chown -R username:username /etc/libvirt/hooks
+    d. sudo chmod -R 755 /etc/libvirt/hooks
+
+*qemu script is optimized for Ryzen 9950X3D. You need to optimize it for your own CPU and reflect your pinning setup in the XML config
