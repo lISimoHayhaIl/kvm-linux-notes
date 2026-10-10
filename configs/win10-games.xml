@@ -1,6 +1,6 @@
 <domain type="kvm">
   <name>win10-games</name>
-  <uuid>eeb7f981-e08a-4115-9481-008f9af9483d</uuid>
+  <uuid>a218a1db-7f4d-4c55-80cb-feb920a8bf7e</uuid>
   <metadata>
     <libosinfo:libosinfo xmlns:libosinfo="http://libosinfo.org/xmlns/libvirt/domain/1.0">
       <libosinfo:os id="http://microsoft.com/win/10"/>
@@ -67,13 +67,13 @@
       <entry name="product">ROG Crosshair Hero X870E</entry>
       <entry name="version">1.0</entry>
       <entry name="serial">12345678</entry>
-      <entry name="uuid">eeb7f981-e08a-4115-9481-008f9af9483d</entry>
+      <entry name="uuid">a218a1db-7f4d-4c55-80cb-feb920a8bf7e</entry>
       <entry name="sku">ROGX870E</entry>
       <entry name="family">X870E MB</entry>
     </system>
   </sysinfo>
   <os firmware="efi">
-    <type arch="x86_64" machine="pc-q35-10.1">hvm</type>
+    <type arch="x86_64" machine="pc-q35-10.2">hvm</type>
     <firmware>
       <feature enabled="no" name="enrolled-keys"/>
       <feature enabled="yes" name="secure-boot"/>
@@ -97,7 +97,6 @@
     <topology sockets="1" dies="1" clusters="1" cores="8" threads="2"/>
     <cache mode="passthrough"/>
     <feature policy="disable" name="hypervisor"/>
-    <feature policy="disable" name="aes"/>
     <feature policy="require" name="invtsc"/>
     <feature policy="require" name="topoext"/>
     <feature policy="require" name="tsc-deadline"/>
@@ -127,7 +126,7 @@
       <address type="drive" controller="0" bus="0" target="0" unit="0"/>
     </disk>
     <controller type="usb" index="0" model="qemu-xhci" ports="15">
-      <address type="pci" domain="0x0000" bus="0x02" slot="0x00" function="0x0"/>
+      <address type="pci" domain="0x0000" bus="0x01" slot="0x00" function="0x0"/>
     </controller>
     <controller type="pci" index="0" model="pcie-root"/>
     <controller type="pci" index="1" model="pcie-root-port">
@@ -204,7 +203,7 @@
       <address type="pci" domain="0x0000" bus="0x00" slot="0x1f" function="0x2"/>
     </controller>
     <controller type="virtio-serial" index="0">
-      <address type="pci" domain="0x0000" bus="0x03" slot="0x00" function="0x0"/>
+      <address type="pci" domain="0x0000" bus="0x02" slot="0x00" function="0x0"/>
     </controller>
     <serial type="pty">
       <target type="isa-serial" port="0">
@@ -229,9 +228,7 @@
     </sound>
     <audio id="1" type="spice"/>
     <video>
-      <model type="virtio" heads="1" primary="yes">
-        <acceleration accel3d="no"/>
-      </model>
+      <model type="virtio" heads="1" primary="yes" device="virtio-vga"/>
       <address type="pci" domain="0x0000" bus="0x00" slot="0x01" function="0x0"/>
     </video>
     <hostdev mode="subsystem" type="usb" managed="yes">
@@ -245,26 +242,26 @@
       <source>
         <address domain="0x0000" bus="0x01" slot="0x00" function="0x0"/>
       </source>
-      <address type="pci" domain="0x0000" bus="0x05" slot="0x00" function="0x0"/>
+      <address type="pci" domain="0x0000" bus="0x04" slot="0x00" function="0x0"/>
     </hostdev>
     <hostdev mode="subsystem" type="pci" managed="yes">
       <source>
         <address domain="0x0000" bus="0x01" slot="0x00" function="0x1"/>
       </source>
-      <address type="pci" domain="0x0000" bus="0x06" slot="0x00" function="0x0"/>
+      <address type="pci" domain="0x0000" bus="0x05" slot="0x00" function="0x0"/>
     </hostdev>
     <hostdev mode="subsystem" type="pci" managed="yes">
       <source>
         <address domain="0x0000" bus="0x02" slot="0x00" function="0x0"/>
       </source>
       <boot order="2"/>
-      <address type="pci" domain="0x0000" bus="0x07" slot="0x00" function="0x0"/>
+      <address type="pci" domain="0x0000" bus="0x06" slot="0x00" function="0x0"/>
     </hostdev>
     <hostdev mode="subsystem" type="pci" managed="yes">
       <source>
-        <address domain="0x0000" bus="0x0b" slot="0x00" function="0x0"/>
+        <address domain="0x0000" bus="0x03" slot="0x00" function="0x0"/>
       </source>
-      <address type="pci" domain="0x0000" bus="0x01" slot="0x00" function="0x0"/>
+      <address type="pci" domain="0x0000" bus="0x07" slot="0x00" function="0x0"/>
     </hostdev>
     <redirdev bus="usb" type="spicevmc">
       <address type="usb" bus="0" port="1"/>
@@ -274,7 +271,7 @@
     </redirdev>
     <watchdog model="itco" action="reset"/>
     <memballoon model="virtio">
-      <address type="pci" domain="0x0000" bus="0x04" slot="0x00" function="0x0"/>
+      <address type="pci" domain="0x0000" bus="0x03" slot="0x00" function="0x0"/>
     </memballoon>
   </devices>
 </domain>
