@@ -11,27 +11,29 @@
     sudo nano /etc/default/limine
 KERNEL_CMDLINE[default]+="quiet nowatchdog splash rw rootflags=subvol=/@ root=UUID=b33b1f0a-d49f-4eef-87f8-25f774aa65c5 nvidia_drm.modeset=1 rd.driver.blacklist=nouveau modprobe.blacklist=nouveau video=efifb:off rd.driver.pre=vfio-pci kvm.ignore_msrs=1 vfio-pci.ids=10de:2704,10de:22bb,14e4:1677,1462:3fa4 amd_iommu=force_enable iommu=pt hugepages=16384"
 
-3. Reboot
+3. Run "sudo limine-update" to update boot configuration
+
+4. Reboot
     CachyOS with Limine, is not using GRUB, and reads the config on the fly, so no need to rebuild before reboot
 
-4. Check if the VGA is bound to vfio-pci instead of its driver
+5. Check if the VGA is bound to vfio-pci instead of its driver
     lspci -nnk | grep -A 3 -E "VGA|3D"
 
-5. Make your user as the user that runs the libvirt service. If not, it will need root password everytime you start a VM
+6. Make your user as the user that runs the libvirt service. If not, it will need root password everytime you start a VM
     sudo nano /etc/libvirt/qemu.conf
     user = "yourusername"
     group = "kvm"
 then add your user to that group
     sudo usermod -aG libvirt,kvm $USER
 
-6. Add your PCI IDs that you want the system to ignore during boot in modprobe configuration. You can add any device here, not only your VGA
+7. Add your PCI IDs that you want the system to ignore during boot in modprobe configuration. You can add any device here, not only your VGA
     sudo nano /etc/modprobe.d/vfio.conf
 	options vfio-pci ids=10de:2704,10de:22bb,14e4:1677,1462:3fa4
 
-7. Also, make sure the correct modules and hooks are loaded during boot. Might be already there, just verify existence and order
+8. Also, make sure the correct modules and hooks are loaded during boot. Might be already there, just verify existence and order
     sudo nano /etc/mkinitcpio.conf
     MODULES="vfio vfio_iommu_type1 vfio_pci irqbypass kvm kvm_amd xhci_hcd"
     HOOKS="base udev autodetect modconf block keyboard keymap filesystems"
 
-8. Rebuild initramfs before rebooting
+9. Rebuild initramfs before rebooting
     sudo mkinitcpio -P

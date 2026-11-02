@@ -5,37 +5,64 @@
 HCPUS=8-15,24-31
 MCPUS=0-7,16-23
 ACPUS=0-31
+GUEST_NAME="$1"
+OPERATION="$2"
+SUBOPERATION="$3"
+
+VM_NAME="win10-games"   # name of VM in `virsh list --all`
+HUGEPAGES=16384             # 16384 x 2MB = 32GB
+
+alloc_hugepages() {
+    sync
+    echo 3 > /proc/sys/vm/drop_caches
+    echo 1 > /proc/sys/vm/compact_memory
+
+    echo "$HUGEPAGES" > /proc/sys/vm/nr_hugepages
+
+    # Checking if pages were allocated, if not, retry
+    for i in 1 2 3 4 5; do
+        [ "$(cat /proc/sys/vm/nr_hugepages)" -ge "$HUGEPAGES" ] && return 0
+        echo 1 > /proc/sys/vm/compact_memory
+        sleep 1
+        echo "$HUGEPAGES" > /proc/sys/vm/nr_hugepages
+    done
+
+    # Could not allocate pages, stop VM loading
+    echo 0 > /proc/sys/vm/nr_hugepages
+    return 1
+}
+
+free_hugepages() {
+    echo 0 > /proc/sys/vm/nr_hugepages
+}
 
 disable_isolation () {
-			systemctl set-property --runtime -- user.slice AllowedCPUs=$ACPUS
-			systemctl set-property --runtime -- system.slice AllowedCPUs=$ACPUS
-			systemctl set-property --runtime -- init.scope AllowedCPUs=$ACPUS
+        systemctl set-property --runtime -- user.slice AllowedCPUs=$ACPUS
+        systemctl set-property --runtime -- system.slice AllowedCPUs=$ACPUS
+        systemctl set-property --runtime -- init.scope AllowedCPUs=$ACPUS
 
-        	taskset -pc $ACPUS 2  # kthreadd reset
+        taskset -pc $ACPUS 2  # kthreadd reset
 }
 
 enable_isolation () {
-			systemctl set-property --runtime -- user.slice AllowedCPUs=$HCPUS 
-			systemctl set-property --runtime -- system.slice AllowedCPUs=$HCPUS
-			systemctl set-property --runtime -- init.scope AllowedCPUs=$HCPUS
+        systemctl set-property --runtime -- user.slice AllowedCPUs=$HCPUS 
+        systemctl set-property --runtime -- system.slice AllowedCPUs=$HCPUS
+        systemctl set-property --runtime -- init.scope AllowedCPUs=$HCPUS
 
-            irq-affinity mask $MCPUS
+        irq-affinity mask $MCPUS
 
-	        taskset -pc $MCPUS 2  # kthreadd only on host cores
+        taskset -pc $MCPUS 2  # kthreadd only on host cores
 }
 
-case "$2" in
-"prepare")
+if [ "$GUEST_NAME" == "$VM_NAME" ]; then
+    if [ "$OPERATION" == "prepare" ] && [ "$SUBOPERATION" == "begin" ]; then
+        alloc_hugepages || exit 1
         enable_isolation
         echo "prepared" >> /home/username/qemu_hook.log
-        ;;
-"started")
-        echo "started" >> /home/username/qemu_hook.log
-        ;;
-"release")
+
+    elif [ "$OPERATION" == "release" ] && [ "$SUBOPERATION" == "end" ]; then
+        free_hugepages
         disable_isolation
         echo "released" >> /home/username/qemu_hook.log
-        ;;
-esac
-
-
+    fi
+fi
