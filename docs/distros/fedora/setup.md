@@ -4,7 +4,7 @@
 
 2. Change boot kernel parameters. 
     sudo nano /etc/default/grub
-    GRUB_CMDLINE_LINUX="rhgb pcie_acs_override=downstream rd.driver.blacklist=nouveau modprobe.blacklist=nouveau video=efifb:off amd_iommu=on rd.driver.pre=vfio-pci kvm.ignore_msrs=1 vfio-pci.ids=10de:2704,10de:22bb,14e4:1677 hugepages=16384 nohz_full=0-7,16-23 rcu_nocbs=0-7,16-23 rcu_nocb_poll"
+    GRUB_CMDLINE_LINUX="rhgb pcie_acs_override=downstream rd.driver.blacklist=nouveau modprobe.blacklist=nouveau video=efifb:off amd_iommu=on rd.driver.pre=vfio-pci kvm.ignore_msrs=1 vfio-pci.ids=10de:2704,10de:22bb,14e4:1677 nohz_full=0-7,16-23 rcu_nocbs=0-7,16-23 rcu_nocb_poll"
     GRUB_DISABLE_OS_PROBER=true
 
 3. Rebuild GRUB and reboot
